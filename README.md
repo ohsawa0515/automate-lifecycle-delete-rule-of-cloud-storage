@@ -1,0 +1,1 @@
+# sample-add-lifecycle-delete-rule-of-cloud-storage
