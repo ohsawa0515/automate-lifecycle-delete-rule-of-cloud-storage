@@ -1,0 +1,20 @@
+imports:
+- path: logging.jinja
+- path: cloud_function.jinja
+- path: cloud_function.py
+- path: function/main.py
+- path: function/requirements.txt
+
+resources:
+  - type: logging.jinja
+    name: logging-sink-pubsub
+    properties:
+      filter: >-
+        resource.type="gcs_bucket"
+        protoPayload.methodName="storage.buckets.create"
+  - type: cloud_function.jinja
+    name: function
+    properties:
+      location: asia-northeast1
+      bucketLocation: ASIA-NORTHEAST1
+      lifecycleExpire: 90  # age of gcs objects

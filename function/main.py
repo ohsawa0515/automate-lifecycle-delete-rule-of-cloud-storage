@@ -1,11 +1,13 @@
-import base64, json
+import base64, json, os
 from google.cloud import storage
+
+age = os.environ.get('LIFECYCLE_EXPIRE')
 
 # Add lifecycle rule which deletes object after 365 days
 def enable_bucket_lifecycle(bucket_name):
     client = storage.Client()
     bucket = client.get_bucket(bucket_name)
-    bucket.add_lifecycle_delete_rule(age=365)
+    bucket.add_lifecycle_delete_rule(age=age)
     bucket.patch()
 
 def main_handler(event, context):

@@ -1,0 +1,18 @@
+resources:
+  - type: gcp-types/logging-v2:projects.sinks
+    name: pubsub_sink
+    properties:
+      sink: {{ env['deployment'] }}_create_bucket_sink
+      uniqueWriterIdentity: true
+      destination: pubsub.googleapis.com/$(ref.pubsub_topic.name)
+      filter: {{ properties['filter'] }}
+  - type: gcp-types/pubsub-v1:projects.topics
+    name: pubsub_topic
+    properties:
+      topic: {{ env["deployment"] }}_topic
+  - type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
+    name: bind-sink-pubsub
+    properties:
+      resource: {{ env["project"] }}
+      role: roles/pubsub.publisher
+      member: $(ref.pubsub_sink.writerIdentity)

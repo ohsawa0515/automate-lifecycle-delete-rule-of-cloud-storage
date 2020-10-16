@@ -1,0 +1,42 @@
+{% set BUCKET = env['deployment'] + "-for-cfn-deploying" %}
+{% set SERVICE_ACCOUNT = env['deployment'] + "-service-account" %}
+
+resources:
+  - type: gcp-types/storage-v1:buckets
+    name: {{ BUCKET }}
+    properties:
+      predefinedAcl: projectPrivate
+      projection: full
+      location: {{ properties['bucketLocation'] }}
+      storageClass: STANDARD
+  - type: gcp-types/iam-v1:projects.serviceAccounts
+    name: {{ SERVICE_ACCOUNT }}
+    properties:
+      name: projects/{{ env["project"] }}
+      accountId: {{ env['deployment'] }}
+      displayName: {{ env['deployment'] }}
+  - type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
+    name: bind-iam-policy
+    properties:
+      resource: {{ env["project"] }}
+      role: roles/storage.admin
+      member: serviceAccount:$(ref.{{ SERVICE_ACCOUNT }}.email)
+  - type: cloud_function.py
+    name: {{ env['deployment'] }}
+    properties:
+      function: {{ env['deployment'] }}
+      codeLocation: function/
+      codeBucket: $(ref.{{ BUCKET }}.name)
+      codeBucketObject: function.zip
+      location: {{ properties['location'] }}
+      timeout: 60s
+      runtime: python38
+      availableMemoryMb: 128
+      entryPoint: main_handler
+      serviceAccountEmail: $(ref.{{ SERVICE_ACCOUNT }}.email)
+      eventTrigger:
+        eventType: providers/cloud.pubsub/eventTypes/topic.publish
+        resource: $(ref.pubsub_topic.name)
+        failurePolicy:
+          retry: {true}
+      lifecycleExpire: {{ properties['lifecycleExpire'] }}
