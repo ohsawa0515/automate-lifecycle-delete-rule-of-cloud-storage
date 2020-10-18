@@ -15,6 +15,6 @@ resources:
   - type: cloud_function.jinja
     name: function
     properties:
-      location: asia-northeast1
-      bucketLocation: ASIA-NORTHEAST1
-      lifecycleExpire: 90  # age of gcs objects
+      location: us-east1
+      bucketLocation: US
+      lifecycleExpire: 365  # age of gcs objects
