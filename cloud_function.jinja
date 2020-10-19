@@ -1,4 +1,4 @@
-{% set BUCKET = env['deployment'] + "-for-cfn-deploying" %}
+{% set BUCKET = env['deployment'] + "-for-cfn-deploying-" + env['project_number'] %}
 {% set SERVICE_ACCOUNT = env['deployment'] + "-service-account" %}
 
 resources:

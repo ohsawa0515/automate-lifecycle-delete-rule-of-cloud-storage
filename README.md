@@ -69,7 +69,7 @@ gcloud deployment-manager deployments update $DEPLOY_NAME
 ## Deletion
 
 ```bash
-gsutil rm -r gs://${DEPLOY_NAME}-for-cfn-deploying
+gsutil rm -r gs://${DEPLOY_NAME}-for-cfn-deploying-${PROJECT_NUMBER}
 gcloud deployment-manager deployments delete $DEPLOY_NAME
 ```
 
