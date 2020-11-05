@@ -39,3 +39,13 @@ def main_handler(event, context):
             logger.warn("The grammar expression '%s' has an error : %s" % (ignorePattern, regex_error))
 
     enable_bucket_lifecycle(bucket_name)
+
+# debug
+if __name__ == '__main__':
+    f = open("event_sample.json", "r", encoding="utf-8")
+    event = json.load(f)
+    f.close()
+    context = ''
+    age = '365'
+    ignorePatterns = '.*.appspot.com###gcf-sources*'
+    main_handler(event, context)
