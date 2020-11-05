@@ -51,7 +51,8 @@ def GenerateConfig(context):
           'function': context.properties['function'],
           'sourceArchiveUrl': source_archive_url,
           'environmentVariables': {
-              'LIFECYCLE_EXPIRE': str(context.properties['lifecycleExpire'])
+              'LIFECYCLE_EXPIRE': str(context.properties['lifecycleExpire']),
+              'IGNORE_PATTERNS': '###'.join(context.properties['ignorePatterns'])
           },
           'entryPoint': context.properties['entryPoint'],
           'eventTrigger': context.properties['eventTrigger'],
