@@ -67,6 +67,14 @@ gcloud deployment-manager deployments create $DEPLOY_NAME --config deployment.ym
 gcloud deployment-manager deployments update $DEPLOY_NAME
 ```
 
+If you failed, you can retry it.
+
+```bash
+# must be preview
+gcloud deployment-manager deployments update $DEPLOY_NAME --config deployment.yml --preview
+gcloud deployment-manager deployments update $DEPLOY_NAME
+```
+
 ## Deletion
 
 ```bash
