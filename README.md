@@ -13,7 +13,8 @@ gcloud services enable compute.googleapis.com \
   deploymentmanager.googleapis.com \
   cloudbuild.googleapis.com \
   cloudresourcemanager.googleapis.com \
-  cloudfunctions.googleapis.com
+  cloudfunctions.googleapis.com \
+  iam.googleapis.com
 ```
 
 ### 2. Add the required permissions in the CDM.
