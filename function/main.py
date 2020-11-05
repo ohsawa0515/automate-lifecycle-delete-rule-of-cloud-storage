@@ -1,7 +1,12 @@
-import base64, json, os
+import base64
+import json
+import os
+import sys
+import re
 from google.cloud import storage
 
 age = os.environ.get('LIFECYCLE_EXPIRE')
+ignorePatterns = os.environ.get('IGNORE_PATTERNS')
 
 # Add lifecycle rule which deletes object after 365 days
 def enable_bucket_lifecycle(bucket_name):
@@ -15,5 +20,13 @@ def main_handler(event, context):
     resource_name = pubsub_message[u'protoPayload'][u'resourceName']
     bucket_name = resource_name.split('/')[3]
     print("Bucket: %s" % bucket_name)
-    enable_bucket_lifecycle(bucket_name)
 
+    for ignorePattern in ignorePatterns.split('###'):
+        try:
+            if re.match(ignorePattern, bucket_name):
+                print("Since it is included in ignorePattern '%s', it does not set the life cycle." % ignorePattern)
+                return
+        except re.error as regex_error:
+            print("The grammar expression '%s' has an error : %s" % (ignorePattern, regex_error))
+
+    enable_bucket_lifecycle(bucket_name)
