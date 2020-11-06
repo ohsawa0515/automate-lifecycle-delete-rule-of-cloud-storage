@@ -25,6 +25,18 @@ def get_gcs_bucket_name(pubsub_message):
         return None
     return resource_name.split('/')[3]
 
+def get_project_id(pubsub_message):
+    resource = pubsub_message.get(u'resource')
+    if resource is None or len(resource) == 0:
+        return None
+    labels = resource.get(u'labels')
+    if labels is None or len(labels) == 0:
+        return None
+    project_id = labels.get(u'project_id')
+    if project_id is None or len(project_id) == 0:
+        return None
+    return project_id
+
 # Add lifecycle rule which deletes object after 365 days
 def enable_bucket_lifecycle(bucket_name):
     client = storage.Client()
@@ -40,6 +52,11 @@ def main_handler(event, context):
         logger.error("Could not get the bucket name from the event data.")
         return
     logger.info("Bucket: %s" % bucket_name)
+
+    project_id = get_project_id(pubsub_message)
+    if project_id is None:
+        logger.warning("Could not get the project id from the event data.")
+    logger.info("Project id: %s" % project_id)
 
     for ignorePattern in ignorePatterns.split('###'):
         try:
