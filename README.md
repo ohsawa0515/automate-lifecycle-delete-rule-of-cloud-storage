@@ -38,6 +38,11 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 
 ### 3. Change the properties in `deployment.yml` as needed.
 
+```bash
+# copy
+cp deployment.yml.example deployment.yml
+```
+
 ```yaml
 properties:
   location: us-east1
