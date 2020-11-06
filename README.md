@@ -48,6 +48,9 @@ properties:
   location: us-east1
   bucketLocation: US
   lifecycleExpire: 365
+  ignorePatterns:
+    - ".*.appspot.com"  # Container Registry, App Engine etc
+    - "gcf-sources*"    # Cloud Functions
 ```
 
 #### location
@@ -62,6 +65,11 @@ GCS bucket location required for Cloud Functions to deploy. Default is `US` (Mul
 
 The number of days a GCS object is held. It will be automatically deleted after this number of days.
 Default is `365` days.
+
+#### ignorePatterns
+
+Bucket name patterns that do not apply lifecycle policies.
+The default is a pattern for buckets created by Google Container Registry (GCR), Google App Engine (GAE), etc.
 
 ### 4. Deploy
 
