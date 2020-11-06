@@ -16,6 +16,15 @@ logger.setLevel(INFO)
 logger.addHandler(handler)
 logger.propagate = False
 
+def get_gcs_bucket_name(pubsub_message):
+    proto_payload = pubsub_message.get(u'protoPayload')
+    if proto_payload is None or len(proto_payload) == 0:
+        return None
+    resource_name = proto_payload.get(u'resourceName')
+    if resource_name is None or len(resource_name) == 0:
+        return None
+    return resource_name.split('/')[3]
+
 # Add lifecycle rule which deletes object after 365 days
 def enable_bucket_lifecycle(bucket_name):
     client = storage.Client()
@@ -26,8 +35,10 @@ def enable_bucket_lifecycle(bucket_name):
 
 def main_handler(event, context):
     pubsub_message = json.loads(base64.b64decode(event['data']).decode('utf-8'))
-    resource_name = pubsub_message[u'protoPayload'][u'resourceName']
-    bucket_name = resource_name.split('/')[3]
+    bucket_name = get_gcs_bucket_name(pubsub_message)
+    if bucket_name is None:
+        logger.error("Could not get the bucket name from the event data.")
+        return
     logger.info("Bucket: %s" % bucket_name)
 
     for ignorePattern in ignorePatterns.split('###'):
@@ -36,7 +47,7 @@ def main_handler(event, context):
                 logger.info("Since it is included in ignorePattern '%s', it does not set the life cycle." % ignorePattern)
                 return
         except re.error as regex_error:
-            logger.warn("The grammar expression '%s' has an error : %s" % (ignorePattern, regex_error))
+            logger.warning("The grammar expression '%s' has an error : %s" % (ignorePattern, regex_error))
 
     enable_bucket_lifecycle(bucket_name)
 
